@@ -48,6 +48,8 @@ const (
 	RecordTypeMX = "MX"
 	// RecordTypeNAPTR is a RecordType enum value
 	RecordTypeNAPTR = "NAPTR"
+	// RecordTypeLUA is a RecordType enum value
+	RecordTypeLUA = "LUA"
 )
 
 var (
@@ -61,6 +63,7 @@ var (
 		RecordTypePTR,
 		RecordTypeMX,
 		RecordTypeNAPTR,
+		RecordTypeLUA,
 	}
 )
 
@@ -260,11 +263,11 @@ func NewEndpoint(dnsName, recordType string, targets ...string) *Endpoint {
 func NewEndpointWithTTL(dnsName, recordType string, ttl TTL, targets ...string) *Endpoint {
 	cleanTargets := make([]string, len(targets))
 	for idx, target := range targets {
-		// Only trim trailing dots for domain name record types, not for TXT or NAPTR records
-		// TXT records can contain arbitrary text including multiple dots
+		// Only trim trailing dots for domain name record types, not for TXT, LUA or NAPTR records
+		// TXT and LUA records can contain arbitrary text including multiple dots
 		// SRV can contain dots in their target part (RFC2782)
 		switch recordType {
-		case RecordTypeTXT, RecordTypeNAPTR, RecordTypeSRV:
+		case RecordTypeTXT, RecordTypeNAPTR, RecordTypeSRV, RecordTypeLUA:
 			cleanTargets[idx] = target
 		default:
 			cleanTargets[idx] = strings.TrimSuffix(target, ".")
